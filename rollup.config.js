@@ -2,14 +2,12 @@ import { swc } from "rollup-plugin-swc3";
 import { dts } from "rollup-plugin-dts";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { terser } from "rollup-plugin-terser";
-import nodePolyfills from 'rollup-plugin-polyfill-node';
-import replace from '@rollup/plugin-replace';
-import alias from '@rollup/plugin-alias';
-import pkg from './package.json';
-import path from 'path';
+import terser from "@rollup/plugin-terser";
+import nodePolyfills from "rollup-plugin-polyfill-node";
+import bakedEnv from "rollup-plugin-baked-env";
+import pkg from "./package.json";
 
-const name = 'lottie-player';
+const name = "lottie-player";
 const globals = {
   url: "url",
   lit: "lit",
@@ -90,11 +88,11 @@ const createLottieConfig = (preset) => {
     treeshake: {
       moduleSideEffects: false,
       propertyReadSideEffects: false,
-      tryCatchDeoptimization: false
+      tryCatchDeoptimization: false,
     },
     output: [
       {
-        file: presetMap[preset].output.umd,
+        file: "./dist/lottie-player.js",
         format: "umd",
         hoistTransitiveImports: true,
         ...commonOutput, 
@@ -127,7 +125,7 @@ const createLottieConfig = (preset) => {
       }),
       nodePolyfills(),
       commonjs({
-        include: /node_modules/
+        include: /node_modules/,
       }),
       swc({
         include: /\.[mc]?[jt]sx?$/,
@@ -150,7 +148,7 @@ const createLottieConfig = (preset) => {
           pure_getters: true,
           passes: 3,
           drop_console: true,
-          drop_debugger: true
+          drop_debugger: true,
         },
         mangle: true,
         output: {
@@ -172,12 +170,10 @@ export default [
     treeshake: true,
     output: [
       {
-        file: './dist/lottie-player.d.ts',
+        file: "./dist/lottie-player.d.ts",
         format: "esm",
-      }
+      },
     ],
-    plugins: [
-      dts(),
-    ],
-  }
+    plugins: [dts()],
+  },
 ];
