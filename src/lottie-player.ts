@@ -20,19 +20,26 @@
  * SOFTWARE.
  */
 
-import { customElement } from 'lit/decorators.js';
-import { BaseLottiePlayer, FileType, RenderConfig, Renderer, parseSrc, wasmModule } from './base-lottie-player';
+import { customElement } from "lit/decorators.js";
+import {
+  BaseLottiePlayer,
+  FileType,
+  RenderConfig,
+  Renderer,
+  parseSrc,
+  wasmModule,
+} from "./base-lottie-player";
 
 const _downloadFile = (fileName: string, blob: Blob) => {
-  const link = document.createElement('a');
-  link.setAttribute('href', URL.createObjectURL(blob));
-  link.setAttribute('download', fileName);
+  const link = document.createElement("a");
+  link.setAttribute("href", URL.createObjectURL(blob));
+  link.setAttribute("download", fileName);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-}
+};
 
-@customElement('lottie-player')
+@customElement("lottie-player")
 export class LottiePlayer extends BaseLottiePlayer {
   /**
    * Sets the rendering configurations.
@@ -64,8 +71,8 @@ export class LottiePlayer extends BaseLottiePlayer {
         return;
       }
 
-      _downloadFile('output.png', blob);
-    }, 'image/png');
+      _downloadFile("output.png", blob);
+    }, "image/png");
   }
 
   /**
@@ -73,16 +80,19 @@ export class LottiePlayer extends BaseLottiePlayer {
    * @since 1.0
    */
   public async save2gif(src: string): Promise<void> {
-    const saver = new wasmModule.TvgLottieAnimation(Renderer.SW, `#${this.canvas!.id}`);
+    const saver = new wasmModule.TvgLottieAnimation(
+      Renderer.SW,
+      `#${this.canvas!.id}`
+    );
     const bytes = await parseSrc(src, FileType.JSON);
-    const isExported = saver.save(bytes, 'gif');
+    const isExported = saver.save(bytes, "gif");
     if (!isExported) {
       const error = saver.error();
       saver.delete();
       throw new Error(`Unable to save. Error: ${error}`);
     }
 
-    const data = wasmModule.FS.readFile('output.gif');
+    const data = wasmModule.FS.readFile("output.gif");
     if (data.length < 6) {
       saver.delete();
       throw new Error(
@@ -90,8 +100,8 @@ export class LottiePlayer extends BaseLottiePlayer {
       );
     }
 
-    const blob = new Blob([data], {type: 'application/octet-stream'});
-    _downloadFile('output.gif', blob);
+    const blob = new Blob([data], { type: "application/octet-stream" });
+    _downloadFile("output.gif", blob);
     saver.delete();
   }
 }
