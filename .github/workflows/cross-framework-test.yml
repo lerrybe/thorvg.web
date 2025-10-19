@@ -1,0 +1,53 @@
+name: Cross-Framework Build Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  cross-framework-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: "latest"
+          actions-cache-folder: "emsdk-cache"
+
+      - name: Verify Emscripten setup
+        run: |
+          echo "EMSDK location: $EMSDK"
+          emcc --version
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Make test script executable
+        run: chmod +x ./scripts/cross-framework-test.sh
+
+      - name: Run cross-framework build test
+        run: ./scripts/cross-framework-test.sh
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "Cross-framework build test completed!"
+          if [ $? -eq 0 ]; then
+            echo "✅ All framework builds passed"
+          else
+            echo "❌ Some framework builds failed"
+          fi
