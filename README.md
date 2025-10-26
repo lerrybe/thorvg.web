@@ -1,6 +1,6 @@
 [![npm](https://img.shields.io/npm/v/@thorvg/lottie-player)](https://www.npmjs.com/package/@thorvg/lottie-player)
 
-# ThroVG for Web
+# ThorVG for Web
 <p align="center">
   <img width="800" height="auto" src="https://github.com/thorvg/thorvg/blob/main/res/logo/512/thorvg-banner.png">
 </p>
@@ -115,6 +115,65 @@ export default function Home() {
 </script>
 ```
 
+## Player Preset Variants
+
+ThorVG Lottie Player provides multiple presets optimized for different use cases. Each preset can be selected based on bundle size and performance requirements.
+
+### Standard Presets
+- **SW**: A CPU-based renderer with full Lottie specification support
+- **GL**: A WebGL accelerated renderer with full Lottie specification support
+
+### Lite Presets
+- **SW-Lite**: A CPU-based renderer that supports basic Lottie specification (PNG only; Fonts and Expressions are not supported)
+- **GL-Lite**: A WebGL accelerated renderer that supports basic Lottie specification (PNG only; Fonts and Expressions are not supported)
+
+### Preset Comparison
+
+| Preset | Renderer | Features | Bundle Size | Use Case |
+|--------|----------|---------|-------------|----------|
+| `sw` | Software | lottie + expressions, jpg, png, webp, ttf | ~687KB | Full-featured applications with CPU rendering |
+| `gl` | WebGL | lottie + expressions, jpg, png, webp, ttf | ~694KB | Full-featured applications with WebGL acceleration |
+| `sw-lite` | Software | lottie, png | ~288KB | Lightweight applications with CPU rendering |
+| `gl-lite` | WebGL | lottie, png | ~294KB | Lightweight applications with WebGL acceleration |
+
+### Preset Usage
+
+#### CDN Usage
+```html
+<!-- Default version -->
+<script src="https://unpkg.com/@thorvg/lottie-player@latest/dist/lottie-player.js"></script>
+
+<!-- Software Renderer (Standard) -->
+<script src="https://unpkg.com/@thorvg/lottie-player@latest/dist/sw/lottie-player.js"></script>
+
+<!-- WebGL Renderer (Standard) -->
+<script src="https://unpkg.com/@thorvg/lottie-player@latest/dist/gl/lottie-player.js"></script>
+
+<!-- Software Renderer (Lite) -->
+<script src="https://unpkg.com/@thorvg/lottie-player@latest/dist/sw-lite/lottie-player.js"></script>
+
+<!-- WebGL Renderer (Lite) -->
+<script src="https://unpkg.com/@thorvg/lottie-player@latest/dist/gl-lite/lottie-player.js"></script>
+```
+
+#### NPM Usage
+```ts
+// Default version
+import '@thorvg/lottie-player';
+
+// Software Renderer (Standard)
+import '@thorvg/lottie-player/sw';
+
+// WebGL Renderer (Standard)  
+import '@thorvg/lottie-player/gl';
+
+// Software Renderer (Lite)
+import '@thorvg/lottie-player/sw-lite';
+
+// WebGL Renderer (Lite)
+import '@thorvg/lottie-player/gl-lite';
+```
+
 ## API
 ### Properties
 
@@ -201,7 +260,7 @@ player.addEventListener('load', () => {
 **Parameters**
 | Name | Type | Description
 | --- | --- | --- |
-| src | `number` | The frame number to move, shouldn't be less than 0 and greater than `totalFrame`
+| frame | `number` | The frame number to move, shouldn't be less than 0 and greater than `totalFrame`
 
 **Return Type** : `void`
 
@@ -210,7 +269,7 @@ player.addEventListener('load', () => {
 
 ---
 
-**Method** : `destory()`
+**Method** : `destroy()`
 
 **Purpose** : Destroy animation and lottie-player element
 
@@ -261,12 +320,25 @@ player.addEventListener('load', () => {
 
 **Method** : `setBgColor(value: string)`
 
-**Purpose** : Set a backgroud color
+**Purpose** : Set a background color
 
 **Parameters**
 | Name | Type | Description
 | --- | --- | --- |
 | value | `string` | Color values. Hex(#fff) or string('red') to set background color
+
+**Return Type** : `void`
+
+---
+
+**Method** : `setQuality(value: number)`
+
+**Purpose** : Set rendering quality for animations
+
+**Parameters**
+| Name | Type | Description
+| --- | --- | --- |
+| value | `number` | Quality value (1-100). Higher values are likely to support better quality but may impact performance.
 
 **Return Type** : `void`
 
@@ -279,7 +351,7 @@ player.addEventListener('load', () => {
 **Parameters**
 | Name | Type | Description
 | --- | --- | --- |
-| value | `ExportableType` | File type to export
+| target | `ExportableType` | File type to export
 
 **Return Type** : `void`
 
@@ -294,9 +366,39 @@ player.addEventListener('load', () => {
 
 ## Examples
 
-Please check these examples in various environments.
+### Framework-specific Examples
+
+Check the usage of each preset in the `example/{framework}` directory:
+
+- [ThorVG React Example](example/react/)
+- [ThorVG Vue Example](example/vue/)
+- [ThorVG Svelte Example](example/svelte/)
+
+You can also check it on CodeSandbox:
 
 - [VanillaJS Usage](https://codesandbox.io/p/sandbox/thorvg-lottieplayer-vanillajs-t737qm)
 - [React Usage](https://codesandbox.io/p/devbox/thorvg-lottieplayer-react-hkkrq3)
 - [VueJS Usage](https://codesandbox.io/p/devbox/thorvg-lottieplayer-vue-758h3l)
 - [Svelte Usage](https://codesandbox.io/p/devbox/thorvg-lottieplayer-svelte-xd4zp6)
+
+### Build Testing
+
+Test framework compatibility by running builds across different frontend frameworks:
+
+```bash
+# From the root directory
+$ npm run test:build
+```
+
+This will automatically detect framework projects in the `example/` directory and test their build processes.
+
+The build testing script is located in `./scripts/build-test/`.
+
+### Local Examples
+Check the usage of each preset in the `example/` directory:
+
+- [Software Renderer (Standard)](example/software.html) - Full Lottie support with CPU rendering
+- [WebGL Renderer (Standard)](example/webgl.html) - Full Lottie support with WebGL acceleration
+- [Software Renderer (Lite)](example/software-lite.html) - Basic Lottie support with CPU rendering
+- [WebGL Renderer (Lite)](example/webgl-lite.html) - Basic Lottie support with WebGL acceleration
+- [WebGPU Renderer](example/webgpu.html) - Full Lottie support with WebGPU acceleration

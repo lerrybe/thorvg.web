@@ -1,0 +1,59 @@
+name: Cross Framework Build Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.19.0"
+          cache: "yarn"
+
+      - name: Install system build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            meson \
+            ninja-build \
+            pkg-config \
+            build-essential \
+            python3
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: "latest"
+          actions-cache-folder: "emsdk-cache"
+
+      - name: Verify Emscripten setup
+        run: |
+          echo "EMSDK location: $EMSDK"
+          emcc --version
+
+      - name: Install root dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Make test script executable
+        run: chmod +x ./scripts/build-test.sh
+
+      - name: Run cross framework build test
+        run: yarn test:build
+        shell: bash
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "Cross framework build test finished (job may have failed above)."

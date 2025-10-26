@@ -11,7 +11,7 @@ import dotLottieWasmUrl from "../node_modules/@lottiefiles/dotlottie-web/dist/do
 import SkottiePlayer, { setCanvasKit } from '../components/SkottiePlayer';
 import skottieWasmUrl from "../node_modules/canvaskit-wasm/bin/full/canvaskit.wasm";
 import InitCanvasKit from 'canvaskit-wasm/bin/full/canvaskit';
-import wasmUrl from "../node_modules/@thorvg/lottie-player/dist/thorvg-wasm.wasm";
+import wasmUrl from "../node_modules/@thorvg/lottie-player/dist/thorvg.wasm";
 
 setDotLottieWasmUrl(dotLottieWasmUrl);
 
@@ -21,7 +21,7 @@ const animations = [
   '5344-honey-sack-hud.json',
   '11555.json',
   '27746-joypixels-partying-face-emoji-animation.json',
-  'a_mountain.json',
+  'R_QPKIVi.json',
   'abstract_circle.json',
   'alien.json',
   'anubis.json',
