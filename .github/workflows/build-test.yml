@@ -11,48 +11,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo (with submodules, because thorvg/thorvg.wasm 등 서브모듈 의존)
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # 2. Setup Node (use >=22.19.0 as requested) and enable yarn cache
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22.19.0"
           cache: "yarn"
 
-      # 3. Setup Emscripten SDK (needed for wasm build in test script)
+      - name: Install system build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            meson \
+            ninja-build \
+            pkg-config \
+            build-essential \
+            python3
+
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: "latest"
           actions-cache-folder: "emsdk-cache"
 
-      # 4. Verify Emscripten setup (optional but very useful for debugging CI)
       - name: Verify Emscripten setup
         run: |
           echo "EMSDK location: $EMSDK"
           emcc --version
 
-      # 5. Install root deps using yarn (respect yarn.lock)
       - name: Install root dependencies
         run: yarn install --frozen-lockfile
 
-      # 6. Make test script executable
       - name: Make test script executable
         run: chmod +x ./scripts/build-test.sh
 
-      # 7. Run cross-framework build test
-      #    - 여기서 build-test.sh 내부에서 실제로:
-      #        - 루트 패키지 빌드 (yarn build 등)
       - name: Run cross framework build test
         run: yarn test:build
+        shell: bash
 
-      # 8. Summary (always runs even if previous step fails)
       - name: Test Summary
         if: always()
         run: |
-          echo "Cross framework build test finished (job status may be failed above)."
+          echo "Cross framework build test finished (job may have failed above)."
